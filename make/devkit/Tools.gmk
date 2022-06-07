@@ -231,8 +231,9 @@ RPM_LIST := \
     dbus dbus-devel \
     libGL libGL-devel \
     libglvnd libglvnd-devel \
+    libavcodec-dev ffmpeg-spice-devel \
     #
-EXTRARPM_LIST := expat expat-devel mesa-libEGL mesa-libEGL-devel mesa-libGL mesa-libGL-devel
+EXTRARPM_LIST := expat libavcodec-dev ffmpeg-spice-devel
 
 ##########################################################################################
 # Define common directories and files
@@ -268,6 +269,8 @@ download-rpms:
 	  cd $(DOWNLOAD_RPMS) && \
 	      wget -r -np -nd $(patsubst %, -A "*%*.rpm", $(RPM_LIST)) $(BASE_URL)
         endif
+         cd $(DOWNLOAD_RPMS) && \
+             wget -r -np -nd $(patsubst %, -A "*%*.rpm", $(EXTRARPM_LIST)) $(BASE_URL)
 
 ##########################################################################################
 # Unpack source packages
