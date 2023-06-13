@@ -59,8 +59,8 @@ ifeq ($(BASE_OS), OL)
     LINUX_VERSION := OL7.6
     KERNEL_HEADERS_RPM := kernel-uek-headers
   else
-    BASE_URL := http://yum.oracle.com/repo/OracleLinux/OL6/4/base/$(ARCH)/
-    LINUX_VERSION := OL6.4
+    BASE_URL := http://yum.oracle.com/repo/OracleLinux/OL7/6/base/$(ARCH)/
+    LINUX_VERSION := OL7.6
   endif
 else ifeq ($(BASE_OS), Fedora)
   DEFAULT_OS_VERSION := 27
@@ -287,8 +287,6 @@ download-rpms:
 	  cd $(DOWNLOAD_RPMS) && \
 	      wget -r -np -nd $(patsubst %, -A "*%*.rpm", $(RPM_LIST)) $(BASE_URL)
         endif
-         cd $(DOWNLOAD_RPMS) && \
-             wget -r -np -nd $(patsubst %, -A "*%*.rpm", $(EXTRARPM_LIST)) $(BASE_URL)
 
 ##########################################################################################
 # Unpack source packages
