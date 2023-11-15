@@ -55,11 +55,11 @@ KERNEL_HEADERS_RPM := kernel-headers
 
 ifeq ($(BASE_OS), OL)
   ifeq ($(ARCH), aarch64)
-    BASE_URL := http://yum.oracle.com/repo/OracleLinux/OL7/6/base/$(ARCH)/
+    BASE_URL := https://yum.oracle.com/repo/OracleLinux/OL7/6/base/$(ARCH)/
     LINUX_VERSION := OL7.6
     KERNEL_HEADERS_RPM := kernel-uek-headers
   else
-    BASE_URL := http://yum.oracle.com/repo/OracleLinux/OL7/6/base/$(ARCH)/
+    BASE_URL := https://yum.oracle.com/repo/OracleLinux/OL7/6/base/$(ARCH)/
     LINUX_VERSION := OL7.6
   endif
 else ifeq ($(BASE_OS), Fedora)
@@ -87,8 +87,16 @@ endif
 # Define external dependencies
 
 # Latest that could be made to work.
-GCC_VER := 12.2.0
-ifeq ($(GCC_VER), 12.2.0)
+GCC_VER := 13.2.0
+ifeq ($(GCC_VER), 13.2.0)
+  gcc_ver := gcc-13.2.0
+  binutils_ver := binutils-2.41
+  ccache_ver := ccache-3.7.12
+  mpfr_ver := mpfr-4.2.0
+  gmp_ver := gmp-6.3.0
+  mpc_ver := mpc-1.3.1
+  gdb_ver := gdb-13.2
+else ifeq ($(GCC_VER), 12.2.0)
   gcc_ver := gcc-12.2.0
   binutils_ver := binutils-2.38
   ccache_ver := ccache-3.7.12
@@ -702,6 +710,10 @@ $(PREFIX)/Makefile: ./Makefile
 $(PREFIX)/Tools.gmk: ./Tools.gmk
 	rm -rf $@
 	cp $< $@
+
+$(PREFIX)/Tars.gmk: ./Tars.gmk
+       rm -rf $@
+       cp $< $@
 
 THESE_MAKEFILES := $(PREFIX)/Makefile $(PREFIX)/Tools.gmk
 
