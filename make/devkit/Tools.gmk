@@ -39,8 +39,6 @@
 # Fix this...
 #
 
-uppercase = $(shell echo $1 | tr a-z A-Z)
-
 $(info TARGET=$(TARGET))
 $(info HOST=$(HOST))
 $(info BUILD=$(BUILD))
@@ -61,24 +59,29 @@ ifeq ($(BASE_OS), OL)
     LINUX_VERSION := OL7.6
     KERNEL_HEADERS_RPM := kernel-uek-headers
   else
-    BASE_URL := https://yum.oracle.com/repo/OracleLinux/OL7/6/base/$(ARCH)/
-    LINUX_VERSION := OL7.6
+    BASE_URL := https://yum.oracle.com/repo/OracleLinux/OL6/4/base/$(ARCH)/
+    LINUX_VERSION := OL6.4
   endif
 else ifeq ($(BASE_OS), Fedora)
   DEFAULT_OS_VERSION := 41
   ifeq ($(BASE_OS_VERSION), )
     BASE_OS_VERSION := $(DEFAULT_OS_VERSION)
   endif
-  ifeq ($(filter x86_64 armhfp, $(ARCH)), )
-    FEDORA_TYPE := fedora-secondary
+  ifeq ($(ARCH), riscv64)
+    BASE_URL := http://fedora.riscv.rocks/repos-dist/f$(BASE_OS_VERSION)/latest/$(ARCH)/Packages/
   else
-    FEDORA_TYPE := fedora/linux
-  endif
-  ARCHIVED := $(shell [ $(BASE_OS_VERSION) -lt $(DEFAULT_OS_VERSION) ] && echo true)
-  ifeq ($(ARCHIVED),true)
-    BASE_URL := https://archives.fedoraproject.org/pub/archive/$(FEDORA_TYPE)/releases/$(BASE_OS_VERSION)/Everything/$(ARCH)/os/Packages/
-  else
-    BASE_URL := https://dl.fedoraproject.org/pub/$(FEDORA_TYPE)/releases/$(BASE_OS_VERSION)/Everything/$(ARCH)/os/Packages/
+    LATEST_ARCHIVED_OS_VERSION := 35
+    ifeq ($(filter x86_64 armhfp, $(ARCH)), )
+      FEDORA_TYPE := fedora-secondary
+    else
+      FEDORA_TYPE := fedora/linux
+    endif
+    NOT_ARCHIVED := $(shell [ $(BASE_OS_VERSION) -gt $(LATEST_ARCHIVED_OS_VERSION) ] && echo true)
+    ifeq ($(NOT_ARCHIVED),true)
+      BASE_URL := https://dl.fedoraproject.org/pub/$(FEDORA_TYPE)/releases/$(BASE_OS_VERSION)/Everything/$(ARCH)/os/Packages/
+    else
+      BASE_URL := https://archives.fedoraproject.org/pub/archive/$(FEDORA_TYPE)/releases/$(BASE_OS_VERSION)/Everything/$(ARCH)/os/Packages/
+    endif
   endif
   LINUX_VERSION := Fedora_$(BASE_OS_VERSION)
 else
@@ -743,8 +746,8 @@ $(PREFIX)/Tools.gmk: ./Tools.gmk
 	cp $< $@
 
 $(PREFIX)/Tars.gmk: ./Tars.gmk
-       rm -rf $@
-       cp $< $@
+  rm -rf $@
+  cp $< $@
 
 THESE_MAKEFILES := $(PREFIX)/Makefile $(PREFIX)/Tools.gmk
 
